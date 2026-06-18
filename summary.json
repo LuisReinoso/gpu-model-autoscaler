@@ -1,0 +1,8 @@
+{
+  "total_requests": 7895,
+  "throughput": "78.77",
+  "error_rate": "0.00",
+  "p50_latency_ms": "1.91",
+  "p95_latency_ms": "3.29",
+  "p99_latency_ms": "0.00"
+}

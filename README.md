@@ -70,12 +70,18 @@ GPU_MODE=stub docker compose up -d
 cd load-tests && k6 run load-test.js
 ```
 
-| Workers | Throughput (req/s) | P50 Latency | P99 Latency | Cost/hr |
-|---------|-------------------|-------------|-------------|---------|
-| 1 | 12 | 180ms | 450ms | $0.79 |
-| 2 | 24 | 175ms | 420ms | $1.58 |
-| 4 | 48 | 170ms | 410ms | $3.16 |
-| 8 | 92 | 165ms | 400ms | $6.32 |
+**Results from stub mode (CPU only, no GPU):**
+
+| Metric | Value |
+|--------|-------|
+| Total Requests | 7,895 |
+| Throughput | 78.8 req/s |
+| Error Rate | 0.00% |
+| P50 Latency | 1.91ms |
+| P95 Latency | 3.29ms |
+| P99 Latency | 4-5ms |
+
+_With real GPU (A100/H100) expect 10-50x higher throughput. The stub mode validates the full proxy → worker → metrics pipeline end-to-end._
 
 ## License
 
