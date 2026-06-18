@@ -1,0 +1,6 @@
+.env
+*.log
+grafana/data/
+prometheus/data/
+.commandcode/
+proxy/proxy
