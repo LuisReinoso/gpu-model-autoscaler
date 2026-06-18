@@ -90,11 +90,11 @@ cd load-tests && k6 run load-test.js
 
 ## Benchmarks
 
+### Stub mode (no GPU, validates full pipeline)
+
 ```bash
 cd load-tests && PROXY_URL=http://localhost:8080 k6 run load-test.js
 ```
-
-**Load profile:** 20s @ 10 VUs → 30s @ 30 VUs → 30s @ 50 VUs → 20s ramp down to 0
 
 | Metric | Value |
 |--------|-------|
@@ -103,15 +103,31 @@ cd load-tests && PROXY_URL=http://localhost:8080 k6 run load-test.js
 | Error Rate | 0.00% |
 | P50 Latency | 1.91ms |
 | P95 Latency | 3.29ms |
-| P99 Latency | ~4-5ms |
 
-_These are real numbers from a CPU-only stub worker. With actual GPU (A100/H100) expect 10-50x higher throughput. The stub mode validates the full proxy → worker → metrics pipeline end-to-end._
+### GPU mode (RTX 4080 — Qwen 2.5 1.5B, real inference)
 
-To reproduce:
+```bash
+python3 -m vllm.entrypoints.openai.api_server \
+  --model Qwen/Qwen2.5-1.5B-Instruct \
+  --port 8001 --max-model-len 2048 --gpu-memory-utilization 0.5 --enforce-eager
+# In another terminal:
+k6 run load-tests/load-test.js
+```
+
+| Metric | Value |
+|--------|-------|
+| Total Requests | 765 |
+| Throughput | 12.7 req/s |
+| Error Rate | 0.00% |
+| P50 Latency | 315ms |
+| P95 Latency | 324ms |
+
+### Reproduce
+
 ```bash
 git clone https://github.com/LuisReinoso/gpu-model-autoscaler.git
 cd gpu-model-autoscaler
-docker compose up -d --build
+docker compose up -d --build   # stub mode (no GPU needed)
 k6 run load-tests/load-test.js
 ```
 
